@@ -1,6 +1,6 @@
 import argparse
 
-from utils import display_report
+from utils import display_report, console
 from analyzer import analyze_password, PasswordReport
 from hash_utils import hash_password, identify_hash
 from cracker import crack_hash
@@ -89,22 +89,19 @@ def main():
             display_report(report)
 
         case "hash":
-            print(hash_password(args.password, args.algorithm))
+            result = hash_password(args.password, args.algorithm)
+            console.print(f"[cyan]Hash:[/cyan] {result}")
 
         case "identify":
-            print(identify_hash(args.hash))
+            result = identify_hash(args.hash)
+            console.print(f"[cyan]Hash type:[/cyan] {result}")
 
         case "crack":
-            result = crack_hash(
-                args.hash,
-                args.algorithm,
-                args.wordlist
-            )
-
+            result = crack_hash(args.hash, args.algorithm, args.wordlist)
             if result:
-                print(f"Password found: {result}")
+                console.print(f"[green]✓ Password found: {result}[/green]")
             else:
-                print("Password not found")
+                console.print("[red]✗ Password not found[/red]")
 
 
 if __name__ == "__main__":
