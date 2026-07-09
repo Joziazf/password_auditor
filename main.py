@@ -1,5 +1,6 @@
 from analyzer import analyze_password, PasswordReport
 from hash_utils import hash_password, identify_hash
+from cracker import crack_hash
 
 def display_menu() -> None:
     print("=" * 35)
@@ -35,7 +36,8 @@ def run_hash_utilities() -> None:
         print("-" * 35)
         print("1. Generate Hash")
         print("2. Identify Hash")
-        print("3. Back")
+        print("3. Crack Hash")
+        print("4. Back")
 
         choice = input("Enter your choice: ")
 
@@ -56,11 +58,26 @@ def run_hash_utilities() -> None:
                 print(f"\nHash type: {result}")
 
             case "3":
+                hash_string = input("Enter hash: ")
+                algorithm = input("Algorithm (md5/sha1/sha256/sha512): ")
+                wordlist_path = input("Wordlist path: ")
+
+                try:
+                    result = crack_hash(hash_string, algorithm, wordlist_path)
+                    if result:
+                        print(f"\n✓ Password found: {result}")
+                    else:
+                        print("\n✗ Password not found in wordlist")
+                except FileNotFoundError as e:
+                    print(f"Error: {e}")
+                except ValueError as e:
+                    print(f"Error: {e}")
+
+            case "4":
                 break
 
             case _:
-                print("Invalid choice.")
-
+                print("Invalid choice. Try again!")
 
 def main() -> None:
     while True:
