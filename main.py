@@ -1,104 +1,111 @@
+import argparse
+
+from utils import display_report
 from analyzer import analyze_password, PasswordReport
 from hash_utils import hash_password, identify_hash
 from cracker import crack_hash
 
-def display_menu() -> None:
-    print("=" * 35)
-    print("    Password Auditor")
-    print("=" * 35)
-    print("1. Analyze Password")
-    print("2. Hash Utilities")
-    print("3. Exit")
+def main():
+    parser = argparse.ArgumentParser(
+        prog="password-auditor",
+        description="Password Auditor - Security Tool"
+    )
 
+    subparsers = parser.add_subparsers(
+        dest="command",
+        required=True
+    )
 
-def display_report(report: PasswordReport) -> None:
-    print("\nPassword Analysis")
-    print("-" * 35)
+    analyze_parser = subparsers.add_parser(
+        "analyze",
+        help="Analyze password strength"
+    )
 
-    print(f"Length:        {report.length}")
-    print(f"Uppercase:     {'✓' if report.has_uppercase else '✗'}")
-    print(f"Lowercase:     {'✓' if report.has_lowercase else '✗'}")
-    print(f"Digits:        {'✓' if report.has_digits else '✗'}")
-    print(f"Special chars: {'✓' if report.has_special else '✗'}")
-    print(f"Score:         {report.score}")
-    print(f"Strength:      {report.strength}")
+    analyze_parser.add_argument(
+        "--password",
+        required=True,
+        help="Password to analyze"
+    )
 
+    hash_parser = subparsers.add_parser(
+        "hash",
+        help="Generate password hash"
+    )
 
-def run_password_analysis() -> None:
-    password = input("Enter Password: ")
-    report = analyze_password(password)
-    display_report(report)
-    input("Press Enter to continue...")
+    hash_parser.add_argument(
+        "--password",
+        required=True,
+        help="Password to hash"
+    )
 
-def run_hash_utilities() -> None:
-    while True:
-        print("\nHash Utilities")
-        print("-" * 35)
-        print("1. Generate Hash")
-        print("2. Identify Hash")
-        print("3. Crack Hash")
-        print("4. Back")
+    hash_parser.add_argument(
+        "--algorithm",
+        required=True,
+        choices=["md5", "sha1", "sha256", "sha512"],
+        help="Hash algorithm"
+    )
 
-        choice = input("Enter your choice: ")
+    identify_parser = subparsers.add_parser(
+        "identify",
+        help="Identify hash type"
+    )
 
-        match choice:
-            case "1":
-                password = input("Enter password: ")
-                algorithm = input("Algorithm (md5/sha1/sha256/sha512): ")
+    identify_parser.add_argument(
+        "--hash",
+        required=True,
+        help="Hash to identify"
+    )
 
-                try:
-                    result = hash_password(password, algorithm)
-                    print(f"\nHash: {result}")
-                except ValueError as e:
-                    print(f"Error: {e}")
+    crack_parser = subparsers.add_parser(
+        "crack",
+        help="Dictionary attack"
+    )
 
-            case "2":
-                hash_string = input("Enter hash: ")
-                result = identify_hash(hash_string)
-                print(f"\nHash type: {result}")
+    crack_parser.add_argument(
+        "--hash",
+        required=True,
+        help="Target hash"
+    )
 
-            case "3":
-                hash_string = input("Enter hash: ")
-                algorithm = input("Algorithm (md5/sha1/sha256/sha512): ")
-                wordlist_path = input("Wordlist path: ")
+    crack_parser.add_argument(
+        "--algorithm",
+        required=True,
+        choices=["md5", "sha1", "sha256", "sha512"],
+        help="Hash algorithm"
+    )
 
-                try:
-                    result = crack_hash(hash_string, algorithm, wordlist_path)
-                    if result:
-                        print(f"\n✓ Password found: {result}")
-                    else:
-                        print("\n✗ Password not found in wordlist")
-                except FileNotFoundError as e:
-                    print(f"Error: {e}")
-                except ValueError as e:
-                    print(f"Error: {e}")
+    crack_parser.add_argument(
+        "--wordlist",
+        required=True,
+        help="Path to wordlist"
+    )
 
-            case "4":
-                break
+    args = parser.parse_args()
 
-            case _:
-                print("Invalid choice. Try again!")
+    match args.command:
 
-def main() -> None:
-    while True:
-        print()
+        case "analyze":
+            report = analyze_password(args.password)
+            display_report(report)
 
-        display_menu()
-        user_choice = input("Enter your choice: ")
+        case "hash":
+            print(hash_password(args.password, args.algorithm))
 
-        match user_choice:
-            case "1":
-                run_password_analysis()
+        case "identify":
+            print(identify_hash(args.hash))
 
-            case "2":
-                run_hash_utilities()
+        case "crack":
+            result = crack_hash(
+                args.hash,
+                args.algorithm,
+                args.wordlist
+            )
 
-            case "3":
-                print("Goodbye!")
-                break
+            if result:
+                print(f"Password found: {result}")
+            else:
+                print("Password not found")
 
-            case _:
-                print("Invalid choice. Try again!")
 
 if __name__ == "__main__":
     main()
