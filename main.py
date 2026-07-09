@@ -1,5 +1,5 @@
 from analyzer import analyze_password, PasswordReport
-
+from hash_utils import hash_password, identify_hash
 
 def display_menu() -> None:
     print("=" * 35)
@@ -29,6 +29,39 @@ def run_password_analysis() -> None:
     display_report(report)
     input("Press Enter to continue...")
 
+def run_hash_utilities() -> None:
+    while True:
+        print("\nHash Utilities")
+        print("-" * 35)
+        print("1. Generate Hash")
+        print("2. Identify Hash")
+        print("3. Back")
+
+        choice = input("Enter your choice: ")
+
+        match choice:
+            case "1":
+                password = input("Enter password: ")
+                algorithm = input("Algorithm (md5/sha1/sha256/sha512): ")
+
+                try:
+                    result = hash_password(password, algorithm)
+                    print(f"\nHash: {result}")
+                except ValueError as e:
+                    print(f"Error: {e}")
+
+            case "2":
+                hash_string = input("Enter hash: ")
+                result = identify_hash(hash_string)
+                print(f"\nHash type: {result}")
+
+            case "3":
+                break
+
+            case _:
+                print("Invalid choice.")
+
+
 def main() -> None:
     while True:
         print()
@@ -41,7 +74,7 @@ def main() -> None:
                 run_password_analysis()
 
             case "2":
-                print("Hash Utilities - Coming Soon")
+                run_hash_utilities()
 
             case "3":
                 print("Goodbye!")
