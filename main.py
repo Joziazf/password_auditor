@@ -97,7 +97,12 @@ def main():
             console.print(f"[cyan]Hash type:[/cyan] {result}")
 
         case "crack":
-            result = crack_hash(args.hash, args.algorithm, args.wordlist)
+            try:
+                result = crack_hash(args.hash, args.algorithm, args.wordlist)
+            except FileNotFoundError as e:
+                console.print(f"[red]✗ {e}[/red]")
+                return
+
             if result:
                 console.print(f"[green]✓ Password found: {result}[/green]")
             else:
