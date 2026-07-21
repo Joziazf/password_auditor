@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "password-auditor"
+version = "0.1.0"
+description = "CLI security tool for password analysis and hash cracking"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "rich==15.0.0",
+    "pygments==2.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+password-auditor = "main:main"
+
+[tool.setuptools]
+py-modules = ["analyzer", "cracker", "hash_utils", "main", "utils"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"

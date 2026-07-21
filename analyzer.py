@@ -24,12 +24,18 @@ def analyze_password(password: str) -> PasswordReport:
     )
 
     score = 0
-    if report.length >= 8: score += 1
-    if report.length >= 12: score += 1
-    if report.has_uppercase: score += 1
-    if report.has_lowercase: score += 1
-    if report.has_digits: score += 1
-    if report.has_special: score += 1
+    if report.length >= 8:
+        score += 1
+    if report.length >= 12:
+        score += 1
+    if report.has_uppercase:
+        score += 1
+    if report.has_lowercase:
+        score += 1
+    if report.has_digits:
+        score += 1
+    if report.has_special:
+        score += 1
 
     report.score = score
     report.strength = (

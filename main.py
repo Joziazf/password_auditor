@@ -1,7 +1,7 @@
 import argparse
 
 from utils import display_report, console
-from analyzer import analyze_password, PasswordReport
+from analyzer import analyze_password
 from hash_utils import hash_password, identify_hash
 from cracker import crack_hash
 

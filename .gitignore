@@ -14,3 +14,4 @@ reports/*.txt
 reports/*.pdf
 wordlists/*.txt
 !wordlists/test.txt
+*.egg-info
